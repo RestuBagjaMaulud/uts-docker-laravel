@@ -2,23 +2,18 @@ FROM php:8.2-fpm
 
 WORKDIR /var/www
 
-# install dependencies
 RUN apt-get update && apt-get install -y \
     zip unzip git curl libpng-dev libonig-dev libxml2-dev
 
-# install php extensions
 RUN docker-php-ext-install pdo pdo_mysql
 
-# install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# copy project
-COPY . .
+# 👉 INI PENTING: masuk ke src
+COPY src/ .
 
-# install dependencies
-RUN composer install
+RUN composer install --no-interaction --prefer-dist
 
-# permission
 RUN chown -R www-data:www-data /var/www
 
 EXPOSE 9000
